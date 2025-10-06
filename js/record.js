@@ -1,66 +1,96 @@
-const modeButtons = document.querySelectorAll('.mode-btn');
-const recordBtn = document.getElementById('recordBtn');
-const playBtn = document.getElementById('playBtn');
-const pauseBtn = document.getElementById('pauseBtn');
-const stopBtn = document.getElementById('stopBtn');
+// recorder.js
+export function createRecorder() {
+  let recordingName = 'Untitled';
+  let baseTime = 0;
+  let isRecording = false;
 
-const recordingIndicator = document.getElementById('recordingIndicator');
-const progressContainer = document.getElementById('progressContainer');
-const progressBar = document.getElementById('progressBar');
+  // хранение начала нажатий: key -> startTimestamp (ms)
+  const active = new Map();
 
-let isRecording = false;
-let isPlaying = false;
-let progress = 0;
-let progressInterval;
+  // итоговые ноты
+  const notes = [];
 
-// Переключение режимов
-modeButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    modeButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-
-// Запись
-recordBtn.addEventListener('click', () => {
-  if (isRecording) return;
-  isRecording = true;
-  recordingIndicator.classList.remove('hidden');
-  progressContainer.classList.add('hidden');
-});
-
-// Проигрывание
-playBtn.addEventListener('click', () => {
-  if (isPlaying) return;
-  isRecording = false;
-  recordingIndicator.classList.add('hidden');
-  isPlaying = true;
-  progress = 0;
-  progressContainer.classList.remove('hidden');
-  progressBar.style.width = '0%';
-  progressInterval = setInterval(() => {
-    progress += 1;
-    progressBar.style.width = `${progress}%`;
-    if (progress >= 100) {
-      clearInterval(progressInterval);
-      isPlaying = false;
-    }
-  }, 100);
-});
-
-// Пауза
-pauseBtn.addEventListener('click', () => {
-  if (isPlaying) {
-    clearInterval(progressInterval);
-    isPlaying = false;
+  function now() {
+    return performance.now();
   }
-});
 
-// Стоп
-stopBtn.addEventListener('click', () => {
-  isRecording = false;
-  isPlaying = false;
-  clearInterval(progressInterval);
-  recordingIndicator.classList.add('hidden');
-  progressContainer.classList.add('hidden');
-});
+  function start(name = 'My Song') {
+    recordingName = name;
+    baseTime = now();
+    isRecording = true;
+    active.clear();
+    notes.length = 0;
+  }
+
+  function stop() {
+    if (!isRecording) {
+      return getRecording();
+    }
+
+    // Заканчиваем активные ноты: закрываем их текущим временем
+    const endTime = now();
+    for (const [key, startTs] of active.entries()) {
+      const start = startTs - baseTime;
+      const duration = Math.max(0, endTime - startTs);
+      notes.push({
+        key,
+        startTime: Math.round(start),
+        duration: Math.round(duration)
+      });
+    }
+    active.clear();
+
+    const duration = notes.length === 0 ? 0 : Math.max(...notes.map(n => n.startTime + n.duration));
+    isRecording = false;
+    return getRecording();
+  }
+
+  function noteOn(key) {
+    if (!isRecording) return;
+    // если уже есть активная запись для этой ноты — игнорируем (не перезаписываем старт)
+    if (active.has(key)) return;
+    active.set(key, now());
+  }
+
+  function noteOff(key) {
+    if (!isRecording) return;
+    const startTs = active.get(key);
+    if (startTs == null) return;
+    const endTs = now();
+    const start = Math.max(0, startTs - baseTime);
+    const dur = Math.max(0, endTs - startTs);
+    notes.push({
+      key,
+      startTime: Math.round(start),
+      duration: Math.round(dur)
+    });
+    active.delete(key);
+  }
+
+  function getRecording() {
+    const totalDuration = notes.length === 0 ? 0 : Math.max(...notes.map(n => n.startTime + n.duration));
+    return {
+      name: recordingName,
+      duration: Math.round(totalDuration),
+      notes: notes.slice().sort((a, b) => a.startTime - b.startTime)
+    };
+  }
+
+  function exportJSON(filename = `${recordingName.replace(/\s+/g, '_') || 'recording'}.json`) {
+    const data = getRecording();
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    return { blob, url, filename, json };
+  }
+
+  return {
+    start,
+    stop,
+    noteOn,
+    noteOff,
+    getRecording,
+    exportJSON,
+    isRecording: () => isRecording
+  };
+}
