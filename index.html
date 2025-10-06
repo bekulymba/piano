@@ -10,6 +10,28 @@
   <main class="app">
     <h1>piano-player</h1>
 
+    <div class="controls">
+  <div class="mode-switch">
+    <button id="interactiveMode" class="mode-btn active">Interactive Mode</button>
+    <button id="preparedMode" class="mode-btn">Prepared Mode</button>
+  </div>
+
+  <div class="transport">
+    <button id="recordBtn" class="control-btn record">Record</button>
+    <button id="playBtn" class="control-btn play">Play</button>
+    <button id="pauseBtn" class="control-btn pause">Pause</button>
+    <button id="stopBtn" class="control-btn stop">Stop</button>
+  </div>
+
+  <div class="status">
+    <div id="recordingIndicator" class="indicator hidden">Recording...</div>
+    <div id="progressContainer" class="progress hidden">
+      <div id="progressBar"></div>
+    </div>
+  </div>
+</div>
+
+
     <section class="piano-wrap" aria-label="Virtual piano">
       <div class="white-keys" role="group" aria-label="White keys">
         <div class="key white" data-note="C3" id="C3"></div>
@@ -18,7 +40,7 @@
         <div class="key white" data-note="F3" id="F3"></div>
         <div class="key white" data-note="G3" id="G3"></div>
         <div class="key white" data-note="A3" id="A3"></div>
-        <div class="key white" data-note="B3" id="B3"></div>
+        <div class="key white" data-note="B3" id="B3"></div> 
 
         <div class="key white" data-note="C4" id="C4"></div>
         <div class="key white" data-note="D4" id="D4"></div>
@@ -56,6 +78,8 @@
     <p class="hint">Играй мышью или клавиатурой.</p>
   </main>
 
-  <script src="js/main.js"></script>
+  <script type="module" src="js/audio.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/record.js"></script>
 </body>
 </html>
