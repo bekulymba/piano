@@ -1,1 +1,0 @@
-// zdes budut skripti
