@@ -1,4 +1,4 @@
-import { playNote, stopNote } from './audio.js';
+import { audioCtx, playNote, stopNote } from './audio.js';
 
 (function () {
   const piano = document.querySelector('.piano-wrap');
@@ -60,7 +60,7 @@ import { playNote, stopNote } from './audio.js';
 
   // Активация AudioContext при первом взаимодействии (иначе Chrome блокирует)
   window.addEventListener('click', async () => {
-    if (typeof audioCtx !== 'undefined' && audioCtx.state === 'suspended') {
+    if (audioCtx && audioCtx.state === 'suspended') {
       await audioCtx.resume();
     }
   }, { once: true });
