@@ -1,0 +1,186 @@
+{
+  "name": "soslo",
+  "duration": 12214,
+  "notes": [
+    {
+      "key": "F#4",
+      "startTime": 1426,
+      "duration": 2085
+    },
+    {
+      "key": "G#4",
+      "startTime": 1615,
+      "duration": 1919
+    },
+    {
+      "key": "G#4",
+      "startTime": 4002,
+      "duration": 379
+    },
+    {
+      "key": "F#4",
+      "startTime": 4015,
+      "duration": 1947
+    },
+    {
+      "key": "G#4",
+      "startTime": 4474,
+      "duration": 402
+    },
+    {
+      "key": "G#4",
+      "startTime": 4899,
+      "duration": 232
+    },
+    {
+      "key": "G#4",
+      "startTime": 5239,
+      "duration": 199
+    },
+    {
+      "key": "G#4",
+      "startTime": 5553,
+      "duration": 352
+    },
+    {
+      "key": "F#4",
+      "startTime": 6145,
+      "duration": 2361
+    },
+    {
+      "key": "G#4",
+      "startTime": 6169,
+      "duration": 754
+    },
+    {
+      "key": "C3",
+      "startTime": 7125,
+      "duration": 147
+    },
+    {
+      "key": "C3",
+      "startTime": 7329,
+      "duration": 148
+    },
+    {
+      "key": "G#4",
+      "startTime": 7449,
+      "duration": 107
+    },
+    {
+      "key": "C3",
+      "startTime": 7486,
+      "duration": 152
+    },
+    {
+      "key": "G#4",
+      "startTime": 7617,
+      "duration": 112
+    },
+    {
+      "key": "C3",
+      "startTime": 7682,
+      "duration": 743
+    },
+    {
+      "key": "G#4",
+      "startTime": 7785,
+      "duration": 148
+    },
+    {
+      "key": "G#4",
+      "startTime": 8015,
+      "duration": 188
+    },
+    {
+      "key": "C3",
+      "startTime": 8626,
+      "duration": 1125
+    },
+    {
+      "key": "F#4",
+      "startTime": 8648,
+      "duration": 1606
+    },
+    {
+      "key": "C3",
+      "startTime": 9867,
+      "duration": 719
+    },
+    {
+      "key": "F#4",
+      "startTime": 10369,
+      "duration": 334
+    },
+    {
+      "key": "C3",
+      "startTime": 10663,
+      "duration": 171
+    },
+    {
+      "key": "F#4",
+      "startTime": 10788,
+      "duration": 144
+    },
+    {
+      "key": "C3",
+      "startTime": 10896,
+      "duration": 141
+    },
+    {
+      "key": "F#4",
+      "startTime": 10987,
+      "duration": 141
+    },
+    {
+      "key": "C3",
+      "startTime": 11090,
+      "duration": 133
+    },
+    {
+      "key": "F#4",
+      "startTime": 11196,
+      "duration": 135
+    },
+    {
+      "key": "C3",
+      "startTime": 11302,
+      "duration": 129
+    },
+    {
+      "key": "F#4",
+      "startTime": 11395,
+      "duration": 118
+    },
+    {
+      "key": "C3",
+      "startTime": 11479,
+      "duration": 139
+    },
+    {
+      "key": "F#4",
+      "startTime": 11596,
+      "duration": 138
+    },
+    {
+      "key": "C3",
+      "startTime": 11691,
+      "duration": 270
+    },
+    {
+      "key": "F#4",
+      "startTime": 11822,
+      "duration": 145
+    },
+    {
+      "key": "F#4",
+      "startTime": 12031,
+      "duration": 99
+    },
+    {
+      "key": "C3",
+      "startTime": 12048,
+      "duration": 166
+    }
+  ]
+}

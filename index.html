@@ -4,82 +4,103 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>piano-player</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="/css/style.css " />
 </head>
 <body>
   <main class="app">
     <h1>piano-player</h1>
 
     <div class="controls">
-  <div class="mode-switch">
-    <button id="interactiveMode" class="mode-btn active">Interactive Mode</button>
-    <button id="preparedMode" class="mode-btn">Prepared Mode</button>
-  </div>
+      <div class="mode-switch">
+        <button id="interactiveMode" class="mode-btn active">Interactive Mode</button>
+        <button id="preparedMode" class="mode-btn">Prepared Mode</button>
+      </div>
 
-  <div class="transport">
-    <button id="recordBtn" class="control-btn record">Record</button>
-    <button id="playBtn" class="control-btn play">Play</button>
-    <button id="pauseBtn" class="control-btn pause">Pause</button>
-    <button id="stopBtn" class="control-btn stop">Stop</button>
-  </div>
+      <!-- Interactive Mode Controls -->
+      <div id="interactiveControls" class="transport">
+        <button id="recordBtn" class="control-btn">● Record</button>
+        <a id="downloadBtn" class="control-btn hidden" download>⬇ Download</a>
+      </div>
 
-  <div class="status">
-    <div id="recordingIndicator" class="indicator hidden">Recording...</div>
-    <div id="progressContainer" class="progress hidden">
-      <div id="progressBar"></div>
+      <!-- Prepared Mode Controls -->
+      <div id="preparedControls" class="transport hidden">
+        <input type="file" id="fileInput" accept=".json" style="display:none" />
+        <button id="loadFileBtn" class="control-btn">Load File</button>
+        <select id="savedSelect" class="control-select">
+          <option value="">-- Saved Songs --</option>
+        </select>
+        <button id="playBtn" class="control-btn">▶ Play</button>
+        <button id="pauseBtn" class="control-btn">⏸ Pause</button>
+        <button id="stopBtn" class="control-btn">⏹ Stop</button>
+        <select id="speedSelect" class="control-select">
+          <option value="0.5">0.5x</option>
+          <option value="0.75">0.75x</option>
+          <option value="1" selected>1x</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.5">1.5x</option>
+          <option value="2">2x</option>
+        </select>
+      </div>
+
+      <div class="status">
+        <div id="recordingIndicator" class="indicator hidden">● REC</div>
+        <div id="progressContainer" class="progress hidden">
+          <div id="progressBar"></div>
+        </div>
+        <div id="upcomingNotes" class="upcoming-notes hidden"></div>
+      </div>
     </div>
-  </div>
-</div>
-
 
     <section class="piano-wrap" aria-label="Virtual piano">
       <div class="white-keys" role="group" aria-label="White keys">
-        <div class="key white" data-note="C3" id="C3"></div>
-        <div class="key white" data-note="D3" id="D3"></div>
-        <div class="key white" data-note="E3" id="E3"></div>
-        <div class="key white" data-note="F3" id="F3"></div>
-        <div class="key white" data-note="G3" id="G3"></div>
-        <div class="key white" data-note="A3" id="A3"></div>
-        <div class="key white" data-note="B3" id="B3"></div> 
+        <div class="key white" data-note="C3" id="C3" tabindex="0"></div>
+        <div class="key white" data-note="D3" id="D3" tabindex="0"></div>
+        <div class="key white" data-note="E3" id="E3" tabindex="0"></div>
+        <div class="key white" data-note="F3" id="F3" tabindex="0"></div>
+        <div class="key white" data-note="G3" id="G3" tabindex="0"></div>
+        <div class="key white" data-note="A3" id="A3" tabindex="0"></div>
+        <div class="key white" data-note="B3" id="B3" tabindex="0"></div>
 
-        <div class="key white" data-note="C4" id="C4"></div>
-        <div class="key white" data-note="D4" id="D4"></div>
-        <div class="key white" data-note="E4" id="E4"></div>
-        <div class="key white" data-note="F4" id="F4"></div>
-        <div class="key white" data-note="G4" id="G4"></div>
-        <div class="key white" data-note="A4" id="A4"></div>
-        <div class="key white" data-note="B4" id="B4"></div>
+        <div class="key white" data-note="C4" id="C4" tabindex="0"></div>
+        <div class="key white" data-note="D4" id="D4" tabindex="0"></div>
+        <div class="key white" data-note="E4" id="E4" tabindex="0"></div>
+        <div class="key white" data-note="F4" id="F4" tabindex="0"></div>
+        <div class="key white" data-note="G4" id="G4" tabindex="0"></div>
+        <div class="key white" data-note="A4" id="A4" tabindex="0"></div>
+        <div class="key white" data-note="B4" id="B4" tabindex="0"></div>
 
-        <div class="key white" data-note="C5" id="C5"></div>
-        <div class="key white" data-note="D5" id="D5"></div>
-        <div class="key white" data-note="E5" id="E5"></div>
+        <div class="key white" data-note="C5" id="C5" tabindex="0"></div>
+        <div class="key white" data-note="D5" id="D5" tabindex="0"></div>
+        <div class="key white" data-note="E5" id="E5" tabindex="0"></div>
       </div>
 
       <div class="black-keys" role="group" aria-label="Black keys">
-        <div class="key black" data-note="C#3" id="Cs3"></div>
-        <div class="key black" data-note="D#3" id="Ds3"></div>
+        <div class="key black" data-note="C#3" id="Cs3" tabindex="0"></div>
+        <div class="key black" data-note="D#3" id="Ds3" tabindex="0"></div>
 
-        <div class="key black" data-note="F#3" id="Fs3"></div>
-        <div class="key black" data-note="G#3" id="Gs3"></div>
-        <div class="key black" data-note="A#3" id="As3"></div>
+        <div class="key black" data-note="F#3" id="Fs3" tabindex="0"></div>
+        <div class="key black" data-note="G#3" id="Gs3" tabindex="0"></div>
+        <div class="key black" data-note="A#3" id="As3" tabindex="0"></div>
 
-        <div class="key black" data-note="C#4" id="Cs4"></div>
-        <div class="key black" data-note="D#4" id="Ds4"></div>
+        <div class="key black" data-note="C#4" id="Cs4" tabindex="0"></div>
+        <div class="key black" data-note="D#4" id="Ds4" tabindex="0"></div>
 
-        <div class="key black" data-note="F#4" id="Fs4"></div>
-        <div class="key black" data-note="G#4" id="Gs4"></div>
-        <div class="key black" data-note="A#4" id="As4"></div>
+        <div class="key black" data-note="F#4" id="Fs4" tabindex="0"></div>
+        <div class="key black" data-note="G#4" id="Gs4" tabindex="0"></div>
+        <div class="key black" data-note="A#4" id="As4" tabindex="0"></div>
 
-        <div class="key black" data-note="C#5" id="Cs5"></div>
-        <div class="key black" data-note="D#5" id="Ds5"></div>
+        <div class="key black" data-note="C#5" id="Cs5" tabindex="0"></div>
+        <div class="key black" data-note="D#5" id="Ds5" tabindex="0"></div>
       </div>
     </section>
 
-    <p class="hint">Играй мышью или клавиатурой.</p>
+    <p class="hint">Прочитать подробнее можно тут:</p>
+    <a href="https://platform.alem.school/git/bekulymba/piano-player"> README</a>
   </main>
 
   <script type="module" src="./js/audio.js"></script>
-  <script type="module" src="./js/main.js"></script>
   <script type="module" src="./js/record.js"></script>
+  <script type="module" src="./js/play.js"></script>
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>
