@@ -107,8 +107,14 @@ preparedMode.addEventListener('click', () => {
 // Recording
 recordBtn.addEventListener('click', () => {
   if (!recorder.isRecording()) {
-    const name = prompt('Recording name:', 'My Song') || 'My Song';
-    recorder.start(name);
+    const name = prompt('Recording name:', 'My Song');
+    
+    // БАГ FIX #2: Если нажал Cancel - не начинаем запись
+    if (name === null) {
+      return;
+    }
+    
+    recorder.start(name || 'My Song');
     recordBtn.classList.add('active');
     recordBtn.textContent = '⏹ Stop Recording';
     recordingIndicator.classList.remove('hidden');
