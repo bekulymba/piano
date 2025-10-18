@@ -27,7 +27,7 @@ function cleanupNote(midiNumber) {
     }
     if (gain) gain.disconnect();
     if (filter) filter.disconnect();
-  } catch (e) {
+  } catch {
     // Ignore cleanup errors
   }
   
@@ -64,7 +64,7 @@ export function playNote(midiNumber) {
       
       // Обновляем время начала
       existingNote.startTime = now;
-    } catch (e) {
+    } catch {
       // Если не получилось обновить, пересоздаем ноту
       cleanupNote(midiNumber);
     }
@@ -96,7 +96,7 @@ export function playNote(midiNumber) {
 
       // Сохраняем ноту
       activeNotes.set(midiNumber, { osc, gain, filter, startTime: now });
-    } catch (e) {
+    } catch {
       // Если произошла ошибка при создании, очищаем
       cleanupNote(midiNumber);
     }
@@ -131,7 +131,7 @@ export function stopNote(midiNumber) {
     
     pendingCleanups.set(midiNumber, cleanupTimeout);
 
-  } catch (e) {
+  } catch {
     // Если что-то пошло не так, сразу очищаем
     cleanupNote(midiNumber);
   }

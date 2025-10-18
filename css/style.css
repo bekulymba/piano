@@ -9,7 +9,7 @@
 
 * { box-sizing: border-box; }
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans;
   margin: 0;
   padding: 24px;
   background: linear-gradient(180deg, #f7f9fc, #eef4ff);

@@ -149,7 +149,7 @@ fileInput.addEventListener('change', (ev) => {
       const obj = JSON.parse(e.target.result);
       player.loadSong(obj);
       alert(`Loaded: ${obj.name || 'Unknown'}`);
-    } catch (err) {
+    } catch {
       alert('Failed to load file');
     }
   };
@@ -191,7 +191,7 @@ savedSelect.addEventListener('change', () => {
     if (song) {
       player.loadSong(song);
     }
-  } catch (err) {
+  } catch {
     // Ignore
   }
 });
@@ -202,7 +202,7 @@ function saveSongToStorage(track) {
     const savedList = JSON.parse(savedListRaw);
     savedList.push(track);
     localStorage.setItem('piano_songs', JSON.stringify(savedList));
-  } catch (err) {
+  } catch {
     // Ignore
   }
 }
@@ -214,7 +214,7 @@ function refreshSavedSelect() {
   let list = [];
   try {
     list = JSON.parse(raw);
-  } catch (err) {
+  } catch  {
     list = [];
   }
   list.forEach((song, idx) => {

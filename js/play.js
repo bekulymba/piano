@@ -138,7 +138,7 @@ export function createPlayer(options) {
         try {
           stopFn(n.key);
           onNoteOff(n.key);
-        } catch (e) {
+        } catch {
           // Ignore
         }
       }

@@ -40,7 +40,6 @@ export function createRecorder() {
     }
     active.clear();
 
-    const duration = notes.length === 0 ? 0 : Math.max(...notes.map(n => n.startTime + n.duration));
     isRecording = false;
     return getRecording();
   }
