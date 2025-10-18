@@ -20,6 +20,8 @@ const savedSelect = document.getElementById('savedSelect');
 const progressContainer = document.getElementById('progressContainer');
 const progressBar = document.getElementById('progressBar');
 const upcomingNotes = document.getElementById('upcomingNotes');
+const currentTrack = document.getElementById('currentTrack');
+const trackName = document.getElementById('trackName');
 
 // Keyboard mapping
 const KEY_TO_NOTE = {
@@ -42,6 +44,17 @@ const NOTE_TO_MIDI = {
 // State
 const activeKeys = new Set();
 let currentMode = 'interactive';
+let currentLoadedSong = null;
+
+// Функция для обновления отображения текущей песни
+function updateCurrentTrack(songName, isPlaying = false) {
+  if (songName && isPlaying) {
+    if (trackName) trackName.textContent = songName;
+    if (currentTrack) currentTrack.classList.remove('hidden');
+  } else {
+    if (currentTrack) currentTrack.classList.add('hidden');
+  }
+}
 
 // Create recorder and player
 const recorder = createRecorder();
@@ -87,6 +100,7 @@ interactiveMode.addEventListener('click', () => {
   progressContainer.classList.add('hidden');
   if (upcomingNotes) upcomingNotes.classList.add('hidden');
   player.stop();
+  updateCurrentTrack(null, false);
 });
 
 preparedMode.addEventListener('click', () => {
@@ -109,14 +123,14 @@ recordBtn.addEventListener('click', () => {
   if (!recorder.isRecording()) {
     const name = prompt('Recording name:', 'My Song');
     
-    // БАГ FIX #2: Если нажал Cancel - не начинаем запись
+    // Если нажал Cancel - не начинаем запись
     if (name === null) {
       return;
     }
     
     recorder.start(name || 'My Song');
     recordBtn.classList.add('active');
-    recordBtn.textContent = '⏹ Stop Recording';
+    recordBtn.textContent = '⹛ Stop Recording';
     recordingIndicator.classList.remove('hidden');
     downloadBtn.classList.add('hidden');
   } else {
@@ -148,6 +162,12 @@ fileInput.addEventListener('change', (ev) => {
     try {
       const obj = JSON.parse(e.target.result);
       player.loadSong(obj);
+      currentLoadedSong = obj;
+      
+      // Сохраняем загруженную песню в localStorage
+      saveSongToStorage(obj);
+      refreshSavedSelect();
+      
       alert(`Loaded: ${obj.name || 'Unknown'}`);
     } catch {
       alert('Failed to load file');
@@ -163,16 +183,23 @@ playBtn.addEventListener('click', () => {
     audioCtx.resume();
   }
   player.play();
+  
+  // Обновляем отображение текущей песни
+  if (currentLoadedSong && currentLoadedSong.name) {
+    updateCurrentTrack(currentLoadedSong.name, true);
+  }
 });
 
 pauseBtn.addEventListener('click', () => {
   player.pause();
+  updateCurrentTrack(null, false);
 });
 
 stopBtn.addEventListener('click', () => {
   player.stop();
   if (progressBar) progressBar.style.width = '0%';
   if (upcomingNotes) upcomingNotes.innerHTML = '';
+  updateCurrentTrack(null, false);
 });
 
 speedSelect.addEventListener('change', (ev) => {
@@ -190,6 +217,7 @@ savedSelect.addEventListener('change', () => {
     const song = list[idx];
     if (song) {
       player.loadSong(song);
+      currentLoadedSong = song;
     }
   } catch {
     // Ignore
@@ -199,8 +227,24 @@ savedSelect.addEventListener('change', () => {
 function saveSongToStorage(track) {
   try {
     const savedListRaw = localStorage.getItem('piano_songs') || '[]';
-    const savedList = JSON.parse(savedListRaw);
-    savedList.push(track);
+    let savedList = JSON.parse(savedListRaw);
+    
+    // Проверяем, не существует ли уже песня с таким именем
+    const existingIndex = savedList.findIndex(s => s.name === track.name);
+    
+    if (existingIndex !== -1) {
+      // Если песня существует, спрашиваем пользователя
+      const overwrite = confirm(`Song "${track.name}" already exists. Overwrite?`);
+      if (overwrite) {
+        savedList[existingIndex] = track;
+      } else {
+        return; // Не сохраняем
+      }
+    } else {
+      // Добавляем новую песню
+      savedList.push(track);
+    }
+    
     localStorage.setItem('piano_songs', JSON.stringify(savedList));
   } catch {
     // Ignore

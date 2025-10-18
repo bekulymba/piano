@@ -16,6 +16,7 @@ export function createPlayer(options) {
   let isPlayingFlag = false;
   let progressInterval = null;
   let upcomingInterval = null;
+  let activeNotes = new Set(); // Отслеживание активных нот
 
   function clearAllTimers() {
     timers.forEach(id => clearTimeout(id));
@@ -31,6 +32,19 @@ export function createPlayer(options) {
       clearInterval(upcomingInterval);
       upcomingInterval = null;
     }
+  }
+
+  function stopAllActiveNotes() {
+    // Останавливаем все активные ноты
+    activeNotes.forEach(key => {
+      try {
+        stopFn(key);
+        onNoteOff(key);
+      } catch {
+        // Ignore
+      }
+    });
+    activeNotes.clear();
   }
 
   function loadSong(obj) {
@@ -70,11 +84,13 @@ export function createPlayer(options) {
         const idOn = setTimeout(() => {
           playFn(n.key);
           onNoteOn(n.key);
+          activeNotes.add(n.key);
         }, Math.max(0, Math.round(noteStart)));
         timers.push(idOn);
       } else {
         playFn(n.key);
         onNoteOn(n.key);
+        activeNotes.add(n.key);
       }
       
       if (n.duration > 0) {
@@ -82,6 +98,7 @@ export function createPlayer(options) {
         const idOff = setTimeout(() => {
           stopFn(n.key);
           onNoteOff(n.key);
+          activeNotes.delete(n.key);
         }, stopDelay);
         timers.push(idOff);
       }
@@ -119,6 +136,7 @@ export function createPlayer(options) {
     pausedAt = elapsed;
     clearAllTimers();
     clearIntervals();
+    stopAllActiveNotes(); // Останавливаем все звучащие ноты
     isPlayingFlag = false;
   }
 
@@ -132,17 +150,7 @@ export function createPlayer(options) {
   function stop() {
     clearAllTimers();
     clearIntervals();
-    
-    if (song && Array.isArray(song.notes)) {
-      for (const n of song.notes) {
-        try {
-          stopFn(n.key);
-          onNoteOff(n.key);
-        } catch {
-          // Ignore
-        }
-      }
-    }
+    stopAllActiveNotes(); // Останавливаем все звучащие ноты
     
     pausedAt = 0;
     isPlayingFlag = false;
