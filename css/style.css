@@ -9,7 +9,7 @@
 
 * { box-sizing: border-box; }
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   margin: 0;
   padding: 24px;
   background: linear-gradient(180deg, #f7f9fc, #eef4ff);
@@ -214,7 +214,48 @@ h1 {
 .key { cursor: pointer; }
 /* .key:focus {outline: none; } */
 
-.hint { margin-top: 12px; color: #6b7280; font-size: 14px; }
+.help {
+  text-align: center;
+  margin-top: auto;
+  padding-top: 500px;
+}
+
+.readme {
+  background: repeating-linear-gradient(
+    45deg,
+    lime,
+    lime 5px,
+    magenta 5px,
+    magenta 10px
+  );
+  color: rgb(251, 255, 0);
+  font-family: "Comic Sans MS", "Papyrus", cursive;
+  font-size: 32px;
+  text-shadow: 3px 3px 0 rgba(247, 0, 255, 0.699), -2px -2px 0 rgb(0, 102, 17);
+  border: 10px ridge hotpink;
+  border-radius: 50% 10% 50% 10% / 10% 50% 10% 50%;
+  box-shadow: 0 0 50px 10px rgb(103, 148, 103) inset, 0 0 20px 10px rgb(47, 0, 255);
+  letter-spacing: 10px;
+  display: inline-block;
+  transition: transform 0.4s ease;
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.readme:hover {
+  animation: spin 1s linear infinite;
+}
+
+.hint {padding-bottom: 10px;; margin-top: 12px; color: #6b7280; font-size: 14px; }
+
 
 /* Responsive */
 @media (max-width: 640px) {
