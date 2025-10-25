@@ -26,14 +26,14 @@ const expandPianoBtn = document.getElementById('expandPianoBtn');
 const expandPianoBtn2 = document.getElementById('expandPianoBtn2');
 const pianoWrap = document.getElementById('pianoWrap');
 
-// Keyboard mapping (original keys for C3-E5)
-const KEY_TO_NOTE = {
-  'q': 'C3', '2': 'C#3', 'w': 'D3', '3': 'D#3', 'e': 'E3',
-  'r': 'F3', '5': 'F#3', 't': 'G3', '6': 'G#3', 'y': 'A3',
-  '7': 'A#3', 'u': 'B3', 'i': 'C4', '9': 'C#4', 'o': 'D4',
-  '0': 'D#4', 'p': 'E4', 'z': 'F4', 's': 'F#4', 'x': 'G4',
-  'd': 'G#4', 'c': 'A4', 'f': 'A#4', 'v': 'B4', 'b': 'C5',
-  'h': 'C#5', 'n': 'D5', 'j': 'D#5', 'm': 'E5'
+// Keyboard mapping using e.code (independent of keyboard layout)
+const CODE_TO_NOTE = {
+  'KeyQ': 'C3', 'Digit2': 'C#3', 'KeyW': 'D3', 'Digit3': 'D#3', 'KeyE': 'E3',
+  'KeyR': 'F3', 'Digit5': 'F#3', 'KeyT': 'G3', 'Digit6': 'G#3', 'KeyY': 'A3',
+  'Digit7': 'A#3', 'KeyU': 'B3', 'KeyI': 'C4', 'Digit9': 'C#4', 'KeyO': 'D4',
+  'Digit0': 'D#4', 'KeyP': 'E4', 'KeyZ': 'F4', 'KeyS': 'F#4', 'KeyX': 'G4',
+  'KeyD': 'G#4', 'KeyC': 'A4', 'KeyF': 'A#4', 'KeyV': 'B4', 'KeyB': 'C5',
+  'KeyH': 'C#5', 'KeyN': 'D5', 'KeyJ': 'D#5', 'KeyM': 'E5'
 };
 
 // Extended NOTE_TO_MIDI mapping for all octaves (C1-C8)
@@ -67,13 +67,22 @@ const NOTE_TO_MIDI = {
 const activeKeys = new Set();
 let currentMode = 'interactive';
 let currentLoadedSong = null;
+let currentPlayingSong = null; // Отслеживаем воспроизводящуюся песню
 let isPianoExpanded = false;
 
 // Функция для обновления отображения текущей песни
 function updateCurrentTrack(songName, isPlaying = false) {
-  if (songName && isPlaying) {
+  if (songName) {
     if (trackName) trackName.textContent = songName;
-    if (currentTrack) currentTrack.classList.remove('hidden');
+    if (currentTrack) {
+      currentTrack.classList.remove('hidden');
+      // Можно добавить индикатор воспроизведения
+      if (isPlaying) {
+        trackName.style.color = '#10b981'; // Зелёный цвет при воспроизведении
+      } else {
+        trackName.style.color = '#9ca3af'; // Серый при паузе
+      }
+    }
   } else {
     if (currentTrack) currentTrack.classList.add('hidden');
   }
@@ -146,6 +155,7 @@ interactiveMode.addEventListener('click', () => {
   progressContainer.classList.add('hidden');
   if (upcomingNotes) upcomingNotes.classList.add('hidden');
   player.stop();
+  currentPlayingSong = null; // Сбрасываем воспроизводящуюся песню
   updateCurrentTrack(null, false);
 });
 
@@ -182,7 +192,7 @@ recordBtn.addEventListener('click', () => {
   } else {
     const track = recorder.stop();
     recordBtn.classList.remove('active');
-    recordBtn.textContent = '● Record';
+    recordBtn.textContent = '⬤ Record';
     recordingIndicator.classList.add('hidden');
     
     const { url, filename } = recorder.exportJSON(track.name || 'recording');
@@ -228,21 +238,30 @@ playBtn.addEventListener('click', () => {
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
+  
+  // Устанавливаем текущую воспроизводящуюся песню
+  currentPlayingSong = currentLoadedSong;
   player.play();
   
   // Обновляем отображение текущей песни
-  if (currentLoadedSong && currentLoadedSong.name) {
-    updateCurrentTrack(currentLoadedSong.name, true);
+  if (currentPlayingSong && currentPlayingSong.name) {
+    updateCurrentTrack(currentPlayingSong.name, true);
   }
 });
 
 pauseBtn.addEventListener('click', () => {
   player.pause();
-  updateCurrentTrack(null, false);
+  // При паузе показываем название текущей воспроизводящейся песни, но без статуса "играет"
+  if (currentPlayingSong && currentPlayingSong.name) {
+    updateCurrentTrack(currentPlayingSong.name, false);
+  } else {
+    updateCurrentTrack(null, false);
+  }
 });
 
 stopBtn.addEventListener('click', () => {
   player.stop();
+  currentPlayingSong = null; // Сбрасываем воспроизводящуюся песню
   if (progressBar) progressBar.style.width = '0%';
   if (upcomingNotes) upcomingNotes.innerHTML = '';
   updateCurrentTrack(null, false);
@@ -357,7 +376,8 @@ document.querySelectorAll('.key').forEach(key => {
     startNote(note);
   });
   
-  key.addEventListener('mouseup', () => {
+  key.addEventListener('mouseup', (e) => {
+    e.preventDefault();
     endNote(note);
   });
   
@@ -366,29 +386,40 @@ document.querySelectorAll('.key').forEach(key => {
       endNote(note);
     }
   });
+  
+  // Поддержка правой кнопки мыши (ПКМ)
+  key.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    // Переключение: если нота активна - останавливаем, иначе - начинаем
+    if (activeKeys.has(note)) {
+      endNote(note);
+    } else {
+      startNote(note);
+    }
+  });
 });
 
-// Keyboard events (only for original mapped keys)
-const pressedKeys = new Set();
+// Keyboard events (using e.code for layout independence)
+const pressedCodes = new Set();
 
 document.addEventListener('keydown', (e) => {
   if (e.repeat) return;
-  const key = e.key.toLowerCase();
-  if (pressedKeys.has(key)) return;
+  const code = e.code;
+  if (pressedCodes.has(code)) return;
   
-  const note = KEY_TO_NOTE[key];
+  const note = CODE_TO_NOTE[code];
   if (note) {
     e.preventDefault();
-    pressedKeys.add(key);
+    pressedCodes.add(code);
     startNote(note);
   }
 });
 
 document.addEventListener('keyup', (e) => {
-  const key = e.key.toLowerCase();
-  pressedKeys.delete(key);
+  const code = e.code;
+  pressedCodes.delete(code);
   
-  const note = KEY_TO_NOTE[key];
+  const note = CODE_TO_NOTE[code];
   if (note) {
     e.preventDefault();
     endNote(note);
@@ -398,7 +429,7 @@ document.addEventListener('keyup', (e) => {
 // Stop all notes on blur
 window.addEventListener('blur', () => {
   activeKeys.forEach(note => endNote(note));
-  pressedKeys.clear();
+  pressedCodes.clear();
 });
 
 // Initialize
