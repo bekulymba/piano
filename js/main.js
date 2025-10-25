@@ -1,4 +1,3 @@
-/* global performance, localStorage, prompt, confirm, alert, URL, Blob, FileReader */
 import { audioCtx, playNote, stopNote } from './audio.js';
 import { createRecorder } from './record.js';
 import { createPlayer } from './play.js';
@@ -23,7 +22,6 @@ const progressBar = document.getElementById('progressBar');
 const upcomingNotes = document.getElementById('upcomingNotes');
 const currentTrack = document.getElementById('currentTrack');
 const trackName = document.getElementById('trackName');
-const pianoWrap = document.getElementById('pianoWrap');
 
 // Keyboard mapping using e.code (independent of keyboard layout)
 const CODE_TO_NOTE = {
@@ -67,7 +65,6 @@ const activeKeys = new Set();
 let currentMode = 'interactive';
 let currentLoadedSong = null;
 let currentPlayingSong = null; // Отслеживаем воспроизводящуюся песню
-let isPianoExpanded = false;
 
 // Функция для обновления отображения текущей песни
 function updateCurrentTrack(songName, isPlaying = false) {
@@ -85,29 +82,6 @@ function updateCurrentTrack(songName, isPlaying = false) {
   } else {
     if (currentTrack) currentTrack.classList.add('hidden');
   }
-}
-
-// Piano expand/collapse functionality
-function togglePianoExpansion() {
-  isPianoExpanded = !isPianoExpanded;
-  
-  if (isPianoExpanded) {
-    pianoWrap.classList.add('expanded');
-    if (expandPianoBtn) expandPianoBtn.textContent = 'Collapse';
-    if (expandPianoBtn2) expandPianoBtn2.textContent = 'Collapse';
-  } else {
-    pianoWrap.classList.remove('expanded');
-    if (expandPianoBtn) expandPianoBtn.textContent = 'Expand';
-    if (expandPianoBtn2) expandPianoBtn2.textContent = 'Expand';
-  }
-}
-
-// Event listeners for expand buttons
-if (expandPianoBtn) {
-  expandPianoBtn.addEventListener('click', togglePianoExpansion);
-}
-if (expandPianoBtn2) {
-  expandPianoBtn2.addEventListener('click', togglePianoExpansion);
 }
 
 // Create recorder and player
@@ -298,7 +272,7 @@ function saveSongToStorage(track) {
     
     if (existingIndex !== -1) {
       // Если песня существует, спрашиваем пользователя
-      const overwrite = confirm(`Song "${track.name}" already exists. Overwrite?`);
+      const overwrite = window.confirm(`Song "${track.name}" already exists. Overwrite?`);
       if (overwrite) {
         savedList[existingIndex] = track;
       } else {
