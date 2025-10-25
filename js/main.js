@@ -1,3 +1,4 @@
+/* global performance, localStorage, prompt, confirm, alert, URL, Blob, FileReader */
 import { audioCtx, playNote, stopNote } from './audio.js';
 import { createRecorder } from './record.js';
 import { createPlayer } from './play.js';
@@ -22,8 +23,6 @@ const progressBar = document.getElementById('progressBar');
 const upcomingNotes = document.getElementById('upcomingNotes');
 const currentTrack = document.getElementById('currentTrack');
 const trackName = document.getElementById('trackName');
-const expandPianoBtn = document.getElementById('expandPianoBtn');
-const expandPianoBtn2 = document.getElementById('expandPianoBtn2');
 const pianoWrap = document.getElementById('pianoWrap');
 
 // Keyboard mapping using e.code (independent of keyboard layout)
