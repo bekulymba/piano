@@ -387,15 +387,9 @@ document.querySelectorAll('.key').forEach(key => {
     }
   });
   
-  // Поддержка правой кнопки мыши (ПКМ)
+  // Блокируем контекстное меню, чтобы ПКМ работала как обычная кнопка
   key.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-    // Переключение: если нота активна - останавливаем, иначе - начинаем
-    if (activeKeys.has(note)) {
-      endNote(note);
-    } else {
-      startNote(note);
-    }
   });
 });
 
